@@ -14,37 +14,34 @@ import scraper_config
 import scraper_utils
 
 
-def scrape_deals():
+def scrape_category(category_name, url, driver):
     """
-    Scrape deals from Amazon's Today's Deals page.
+    Scrape deals from a specific category URL.
     
+    Args:
+        category_name: Name of the category
+        url: URL to scrape
+        driver: Selenium WebDriver
+        
     Returns:
         list: List of deal dictionaries
     """
-    print("Initializing browser...")
-    driver = scraper_utils.setup_driver()
+    print(f"\nScraping category: {category_name}")
+    print(f"URL: {url}")
+    
     deals = []
     
     try:
-        print(f"Navigating to Amazon Deals page...")
-        driver.get(scraper_config.DEALS_URL)
+        driver.get(url)
+        time.sleep(3) # Wait for page load
         
-        # Wait for page to load
-        print("Waiting for page to load...")
-        time.sleep(5)
-        
-        # Save page source for debugging
-        print("Page loaded. Analyzing structure...")
-        
-        # Try multiple selectors for deal containers
+        # Selectors for Best Sellers / New Releases pages
         selectors = [
-            "[data-testid='grid-deals-container'] > div",
-            "div[data-deal-id]",
-            ".DealCard-module__card",
-            "div[class*='DealCard']",
-            "div[class*='deal-card']",
-            ".a-section.octopus-dlp-asin-section",
-            "div.a-section[data-asin]"
+            "div.zg-grid-general-faceout", # Common grid item
+            "div[id*='p13n-asin-index']", # Ranking items
+            "div[class*='_p13n-zg-list-grid-desktop_truncation_']", # Title container
+            "div[class*='p13n-sc-uncoverable-faceout']",
+            ".a-section.a-spacing-none.aok-relative"
         ]
         
         deal_elements = []
@@ -59,49 +56,55 @@ def scrape_deals():
                 continue
         
         if not deal_elements:
-            print("  No deal elements found with standard selectors.")
-            print("  Trying to find all product links...")
+             print("  No elements found with standard selectors. Checking for direct links...")
+             # Fallback
+             return []
+
+        count = 0
+        for elem in deal_elements:
+            if count >= scraper_config.MAX_DEALS // 2: # Limit per category
+                break
             
-            # Fallback: find all product links
-            product_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/dp/']")
-            print(f"  Found {len(product_links)} product links")
-            
-            if product_links:
-                # Process product links directly
-                count = 0
-                for link in product_links[:scraper_config.MAX_DEALS]:
-                    try:
-                        deal = extract_deal_from_link(link, driver)
-                        if deal:
-                            deals.append(deal)
-                            count += 1
-                            print(f"  [{count}] {deal['title'][:50]}...")
-                        
-                        time.sleep(scraper_config.REQUEST_DELAY)
-                    except Exception as e:
-                        continue
-        else:
-            print(f"\nExtracting deal information from {len(deal_elements)} elements...")
-            
-            count = 0
-            for deal_elem in deal_elements:
-                if count >= scraper_config.MAX_DEALS:
-                    break
+            try:
+                deal = extract_deal_info(elem, driver)
+                if deal:
+                    # Add category info
+                    deal['category'] = category_name
+                    deals.append(deal)
+                    count += 1
+                    print(f"  [{count}] {deal['title'][:50]}...")
+            except Exception as e:
+                continue
                 
-                try:
-                    deal = extract_deal_info(deal_elem, driver)
-                    if deal:
-                        deals.append(deal)
-                        count += 1
-                        print(f"  [{count}] {deal['title'][:50]}...")
-                    
-                    # Rate limiting
-                    time.sleep(scraper_config.REQUEST_DELAY)
-                    
-                except Exception as e:
-                    continue
+    except Exception as e:
+        print(f"Error scraping {category_name}: {e}")
         
-        print(f"\nSuccessfully scraped {len(deals)} deals!")
+    return deals
+
+
+def scrape_deals():
+    """
+    Scrape deals from all configured categories.
+    
+    Returns:
+        list: List of deal dictionaries
+    """
+    print("Initializing browser...")
+    driver = scraper_utils.setup_driver()
+    all_deals = []
+    
+    try:
+        for name, url in scraper_config.CATEGORIES.items():
+            category_deals = scrape_category(name, url, driver)
+            all_deals.extend(category_deals)
+            
+            if len(all_deals) >= scraper_config.MAX_DEALS:
+                print(f"\nReached maximum deals limit ({scraper_config.MAX_DEALS})")
+                break
+                
+            time.sleep(scraper_config.REQUEST_DELAY)
+            
+        print(f"\nSuccessfully scraped {len(all_deals)} total deals!")
         
     except Exception as e:
         print(f"Error during scraping: {e}")
@@ -112,7 +115,7 @@ def scrape_deals():
         print("Closing browser...")
         driver.quit()
     
-    return deals
+    return all_deals
 
 
 def extract_deal_from_link(link_elem, driver):
@@ -220,40 +223,51 @@ def extract_deal_info(deal_elem, driver):
         except NoSuchElementException:
             return None
         
-        # Extract title
-        try:
-            title_elem = deal_elem.find_element(By.CSS_SELECTOR, "[data-testid='deal-title']")
-            deal["title"] = scraper_utils.safe_get_text(title_elem)
-        except NoSuchElementException:
-            # Try alternative selector
-            try:
-                title_elem = deal_elem.find_element(By.CSS_SELECTOR, "span[class*='title']")
-                deal["title"] = scraper_utils.safe_get_text(title_elem)
-            except:
-                pass
-        
-        # Extract image
+        # Extract image and use alt text for title if needed
         try:
             img_elem = deal_elem.find_element(By.CSS_SELECTOR, "img")
             deal["image_url"] = scraper_utils.safe_get_attribute(img_elem, "src")
+            image_alt = scraper_utils.safe_get_attribute(img_elem, "alt")
+            
+            # Use image alt as title if we haven't found a good one yet
+            if not deal["title"] or "formats available" in deal["title"] or len(deal["title"]) < 5:
+                if image_alt:
+                    deal["title"] = image_alt
         except NoSuchElementException:
             pass
+            
+        # Extract title (if not already found from image)
+        if not deal["title"] or "formats available" in deal["title"]:
+             try:
+                # Try Best Sellers selector first
+                title_elem = deal_elem.find_element(By.CSS_SELECTOR, "div[class*='_p13n-zg-list-grid-desktop_truncation_']")
+                text = scraper_utils.safe_get_text(title_elem)
+                if text and "formats available" not in text:
+                    deal["title"] = text
+             except:
+                pass
         
         # Extract current price
         try:
-            price_elem = deal_elem.find_element(By.CSS_SELECTOR, "[data-testid='deal-price']")
+            # Best Sellers price
+            price_elem = deal_elem.find_element(By.CSS_SELECTOR, "span.p13n-sc-price, span._cDEzb_p13n-sc-price_3mJ9Z")
             price_text = scraper_utils.safe_get_text(price_elem)
             deal["current_price"] = price_text
         except NoSuchElementException:
-            # Try alternative selectors
             try:
-                price_elem = deal_elem.find_element(By.CSS_SELECTOR, "span[class*='price']")
+                price_elem = deal_elem.find_element(By.CSS_SELECTOR, "[data-testid='deal-price']")
                 price_text = scraper_utils.safe_get_text(price_elem)
                 deal["current_price"] = price_text
-            except:
-                pass
+            except NoSuchElementException:
+                # Try alternative selectors
+                try:
+                    price_elem = deal_elem.find_element(By.CSS_SELECTOR, "span[class*='price']")
+                    price_text = scraper_utils.safe_get_text(price_elem)
+                    deal["current_price"] = price_text
+                except:
+                    pass
         
-        # Extract discount percentage
+        # Extract discount percentage (Best sellers often don't show savings explicitly in grid, but let's check)
         try:
             discount_elem = deal_elem.find_element(By.CSS_SELECTOR, "[data-testid='deal-badge-price']")
             discount_text = scraper_utils.safe_get_text(discount_elem)

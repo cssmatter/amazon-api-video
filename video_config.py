@@ -3,7 +3,7 @@
 # Video Settings
 VIDEO_WIDTH = 1280
 VIDEO_HEIGHT = 720
-FPS = 30
+FPS = 24
 SLIDE_DURATION = 4  # seconds per product
 
 # Colors (RGB)
@@ -28,12 +28,13 @@ BADGE_FONT_SIZE = 60
 LINK_TEXT_FONT_SIZE = 50
 
 # Layout Positions (percentage of screen)
-TITLE_Y_POS = 0.28  # Moved up slightly
-CURRENT_PRICE_Y_POS = 0.52  # Moved down
-ORIGINAL_PRICE_Y_POS = 0.64  # Moved down
-SAVINGS_Y_POS = 0.77  # Moved down
+# Layout Positions (percentage of screen)
+TITLE_Y_POS = 0.30  # Moved up to allow expansion
+CURRENT_PRICE_Y_POS = 0.52  # Unused
+ORIGINAL_PRICE_Y_POS = 0.64  # Unused
+SAVINGS_Y_POS = 0.65  # Moved down to avoid title overlap
 BADGE_Y_POS = 0.08  # Moved up closer to top
-LINK_TEXT_Y_POS = 0.92  # Bottom of screen
+LINK_TEXT_Y_POS = 0.80  # Moved down slightly
 
 # Fonts
 # MoviePy will use default fonts, but you can specify custom fonts here
@@ -42,5 +43,6 @@ FONT_FAMILY = "Arial-Bold"  # or path to .ttf file
 # Output
 OUTPUT_FILENAME = "amazon_deals_video.mp4"
 CODEC = "libx264"
-AUDIO = False  # No audio for now
+AUDIO = True
+AUDIO_FILENAME = "Funk Game Loop - Kevin MacLeod.mp3"
 BITRATE = "5000k"

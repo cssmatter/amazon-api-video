@@ -6,7 +6,7 @@ Each product is displayed for 4 seconds with pricing information
 
 import json
 import moviepy
-from moviepy import ImageClip, TextClip, CompositeVideoClip, concatenate_videoclips
+from moviepy import ImageClip, TextClip, CompositeVideoClip, concatenate_videoclips, AudioFileClip, afx
 import numpy as np
 import video_config
 
@@ -68,7 +68,7 @@ def create_product_slide(product, width, height, duration):
             text=title_text,
             font_size=video_config.TITLE_FONT_SIZE,
             color='white',
-            size=(width - 200, None),
+            size=(width - 100, 300),
             method='caption',
             text_align='center'
         ).with_position(('center', int(height * video_config.TITLE_Y_POS))).with_duration(duration)
@@ -77,30 +77,32 @@ def create_product_slide(product, width, height, duration):
         print(f"    Warning: Could not create title clip: {e}")
     
     # Current Price (Large and Green)
-    try:
-        current_price_clip = TextClip(
-            text=product['current_price'] + " ",  # Add space to prevent clipping
-            font_size=video_config.CURRENT_PRICE_FONT_SIZE,
-            color='#22C55E',  # Green
-            text_align='center'
-        ).with_position(('center', int(height * video_config.CURRENT_PRICE_Y_POS))).with_duration(duration)
-        clips.append(current_price_clip)
-    except Exception as e:
-        print(f"    Warning: Could not create price clip: {e}")
+    # Current Price (Removed)
+    # try:
+    #     current_price_clip = TextClip(
+    #         text=product['current_price'] + " ",  # Add space to prevent clipping
+    #         font_size=video_config.CURRENT_PRICE_FONT_SIZE,
+    #         color='#22C55E',  # Green
+    #         text_align='center'
+    #     ).with_position(('center', int(height * video_config.CURRENT_PRICE_Y_POS))).with_duration(duration)
+    #     clips.append(current_price_clip)
+    # except Exception as e:
+    #     print(f"    Warning: Could not create price clip: {e}")
     
     # Original Price (Strikethrough effect with smaller text)
-    if product.get('original_price'):
-        try:
-            original_text = f"Was: {product['original_price']}"
-            original_price_clip = TextClip(
-                text=original_text,
-                font_size=video_config.ORIGINAL_PRICE_FONT_SIZE,
-                color='#94A3B8',  # Gray
-                text_align='center'
-            ).with_position(('center', int(height * video_config.ORIGINAL_PRICE_Y_POS))).with_duration(duration)
-            clips.append(original_price_clip)
-        except Exception as e:
-            print(f"    Warning: Could not create original price clip: {e}")
+    # Original Price (Removed)
+    # if product.get('original_price'):
+    #     try:
+    #         original_text = f"Was: {product['original_price']}"
+    #         original_price_clip = TextClip(
+    #             text=original_text,
+    #             font_size=video_config.ORIGINAL_PRICE_FONT_SIZE,
+    #             color='#94A3B8',  # Gray
+    #             text_align='center'
+    #         ).with_position(('center', int(height * video_config.ORIGINAL_PRICE_Y_POS))).with_duration(duration)
+    #         clips.append(original_price_clip)
+    #     except Exception as e:
+    #         print(f"    Warning: Could not create original price clip: {e}")
     
     # Savings Information
     if product.get('savings') and product.get('savings_percentage'):
@@ -110,6 +112,8 @@ def create_product_slide(product, width, height, duration):
                 text=savings_text,
                 font_size=video_config.SAVINGS_FONT_SIZE,
                 color='#FBBF24',  # Amber/Gold
+                size=(width - 100, 100),
+                method='caption',
                 text_align='center'
             ).with_position(('center', int(height * video_config.SAVINGS_Y_POS))).with_duration(duration)
             clips.append(savings_clip)
@@ -154,6 +158,8 @@ def create_product_slide(product, width, height, duration):
             text="Product Link in Description",
             font_size=video_config.LINK_TEXT_FONT_SIZE,
             color='white',
+            size=(width - 100, 100),
+            method='caption',
             text_align='center'
         ).with_position(('center', int(height * video_config.LINK_TEXT_Y_POS))).with_duration(duration)
         clips.append(link_text_clip)
@@ -184,14 +190,18 @@ def create_intro_slide(width, height, duration=3):
         title_clip = TextClip(
             text="Amazon Deals",
             font_size=120,
-            color='white'
-        ).with_position(('center', int(height * 0.35))).with_duration(duration)
+            color='white',
+            size=(width - 100, 300),
+            method='caption'
+        ).with_position(('center', int(height * 0.30))).with_duration(duration)
         
         subtitle_clip = TextClip(
             text="Today's Best Offers",
             font_size=60,
-            color='#FBBF24'
-        ).with_position(('center', int(height * 0.55))).with_duration(duration)
+            color='#FBBF24',
+            size=(width - 100, 150),
+            method='caption'
+        ).with_position(('center', int(height * 0.75))).with_duration(duration)
         
         final_clip = CompositeVideoClip([bg_clip, title_clip, subtitle_clip])
         # final_clip = final_clip.fadein(0.5).fadeout(0.5)
@@ -211,14 +221,18 @@ def create_outro_slide(width, height, duration=3):
         title_clip = TextClip(
             text="Thanks for Watching!",
             font_size=100,
-            color='white'
-        ).with_position(('center', int(height * 0.35))).with_duration(duration)
+            color='white',
+            size=(width - 100, 300),
+            method='caption'
+        ).with_position(('center', int(height * 0.30))).with_duration(duration)
         
         subtitle_clip = TextClip(
             text="Check description for links",
             font_size=50,
-            color='#FBBF24'
-        ).with_position(('center', int(height * 0.55))).with_duration(duration)
+            color='#FBBF24',
+            size=(width - 100, 150),
+            method='caption'
+        ).with_position(('center', int(height * 0.75))).with_duration(duration)
         
         final_clip = CompositeVideoClip([bg_clip, title_clip, subtitle_clip])
         # final_clip = final_clip.fadein(0.5).fadeout(0.5)
@@ -283,6 +297,17 @@ def create_deals_video(input_file="products.json", output_file=None):
     total_duration = len(deals) * video_config.SLIDE_DURATION + 6  # +6 for intro/outro
     print(f"Total video duration: {total_duration} seconds ({total_duration/60:.1f} minutes)")
     
+    # Add background music
+    if video_config.AUDIO and video_config.AUDIO_FILENAME:
+        print(f"\nAdding background music: {video_config.AUDIO_FILENAME}")
+        try:
+            bg_music = AudioFileClip(video_config.AUDIO_FILENAME)
+            # Loop music to match video duration
+            bg_music = bg_music.with_effects([afx.AudioLoop(duration=total_duration)])
+            final_video = final_video.with_audio(bg_music)
+        except Exception as e:
+            print(f"Warning: Could not add background music: {e}")
+
     # Write video file
     print(f"\nRendering video to {output_file}...")
     print("This may take a few minutes...")
@@ -294,7 +319,7 @@ def create_deals_video(input_file="products.json", output_file=None):
         bitrate=video_config.BITRATE,
         audio=video_config.AUDIO,
         threads=1,
-        preset='medium',
+        preset='ultrafast',
         logger='bar'
     )
     
