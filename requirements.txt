@@ -1,1 +1,8 @@
 amazon-paapi5
+selenium
+webdriver-manager
+beautifulsoup4
+requests
+moviepy
+pillow
+numpy

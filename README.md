@@ -1,109 +1,146 @@
-# Amazon Product Advertising API - Deal Fetcher
+# Amazon Deals - Multiple Data Sources
 
-This project integrates with Amazon's Product Advertising API (PA API) 5.0 to fetch the latest deals and store them in a `products.json` file.
+This project provides **three ways** to get Amazon deals data:
 
-## Prerequisites
+1. **Official PA API** (Best - when eligible)
+2. **Web Scraper** (Alternative - may face bot detection)
+3. **Sample Data Generator** (Immediate - for testing)
 
-1. **Amazon Associate Account**: You need an Amazon Associate account to get your Partner Tag (Associate Tag)
-2. **PA API Credentials**: Access Key and Secret Key from Amazon PA API
-3. **Python 3.7+**: Make sure Python is installed on your system
+## Quick Start
 
-## Setup
+### Option 1: Sample Data (Immediate) ✅
 
-### 1. Install Dependencies
+Generate sample deals data instantly for testing:
 
 ```bash
-pip install -r requirements.txt
+python generate_sample_deals.py
 ```
 
-### 2. Configure API Credentials
+This creates `products.json` with realistic sample deals including your affiliate tag.
 
-Edit `config.py` and update the following:
+---
 
-- **PARTNER_TAG**: Replace `"YOUR_ASSOCIATE_TAG_HERE"` with your actual Amazon Associate Tag
-  - Get it from: https://affiliate-program.amazon.com/
-- **ACCESS_KEY**: Already configured
-- **SECRET_KEY**: Already configured
+### Option 2: Official PA API (Recommended - Requires Eligibility)
 
-### 3. Optional Configuration
-
-You can also customize these settings in `config.py`:
-
-- **REGION**: Change marketplace region (default: `us-east-1` for US)
-- **SEARCH_KEYWORDS**: Modify search terms to find specific deals (default: `"deals"`)
-- **SEARCH_INDEX**: Change product category (default: `"All"`)
-- **MAX_ITEMS**: Number of items to fetch (default: `10`)
-
-## Usage
-
-Run the script to fetch deals:
+Use Amazon's official Product Advertising API:
 
 ```bash
 python fetch_amazon_deals.py
 ```
 
-The script will:
-1. Connect to Amazon PA API using your credentials
-2. Search for products with deals/savings
-3. Extract product information including prices, savings, and promotions
-4. Save the results to `products.json`
+**Requirements:**
+- Amazon Associate account with 3+ qualifying sales
+- PA API access granted by Amazon
+
+**Status:** Your account (`booksmanish-20`) needs to meet eligibility requirements.
+
+---
+
+### Option 3: Web Scraper (Alternative - May Face Challenges)
+
+Scrape Amazon's Today's Deals page:
+
+```bash
+python scrape_amazon_deals.py
+```
+
+**Note:** Amazon has aggressive bot detection. This may not always work reliably.
+
+---
+
+## Files Overview
+
+### Core Scripts
+
+- **`fetch_amazon_deals.py`** - Official PA API integration (ready when eligible)
+- **`scrape_amazon_deals.py`** - Web scraper using Selenium
+- **`generate_sample_deals.py`** - Sample data generator (works immediately)
+
+### Configuration
+
+- **`config.py`** - PA API credentials and settings
+- **`scraper_config.py`** - Web scraper settings
+- **`scraper_utils.py`** - Utility functions for scraping
+
+### Output
+
+- **`products.json`** - Deals data in standardized JSON format
+
+---
 
 ## Output Format
 
-The `products.json` file contains:
+All three methods produce the same JSON structure:
 
 ```json
 {
-  "fetch_timestamp": "2025-12-16T16:48:23+05:30",
-  "total_deals": 5,
+  "fetch_timestamp": "2025-12-16T17:19:22",
+  "total_deals": 10,
+  "source": "sample_data|web_scraper|pa_api",
   "products": [
     {
-      "asin": "B0XXXXXXXX",
+      "asin": "B09B8V1LZ3",
       "title": "Product Name",
-      "current_price": "$19.99",
-      "original_price": "$29.99",
-      "savings": "USD 10.00",
-      "savings_percentage": "33%",
+      "current_price": "$22.99",
+      "original_price": "$49.99",
+      "savings": "USD 27.00",
+      "savings_percentage": "54%",
       "currency": "USD",
       "is_prime_eligible": true,
       "promotions": [],
       "image_url": "https://...",
-      "product_url": "https://www.amazon.com/dp/B0XXXXXXXX?tag=..."
+      "product_url": "https://www.amazon.com/dp/ASIN?tag=booksmanish-20"
     }
   ]
 }
 ```
 
-## Features
+---
 
-- ✅ Fetches products with active deals and savings
-- ✅ Extracts pricing information (current price, original price, savings)
-- ✅ Identifies Prime-eligible products
-- ✅ Captures product promotions
-- ✅ Includes product images and URLs
-- ✅ Comprehensive error handling
-- ✅ Clean JSON output format
+## Current Status
 
-## Troubleshooting
+| Method | Status | Notes |
+|--------|--------|-------|
+| Sample Data | ✅ Working | Use for immediate testing |
+| PA API | ⏳ Waiting | Need 3+ sales for eligibility |
+| Web Scraper | ⚠️ Limited | May face bot detection |
 
-### "Partner Tag not configured" Error
+---
 
-Make sure you've updated `config.py` with your actual Amazon Associate Tag.
+## Recommendations
 
-### API Authentication Errors
+**For Development/Testing:**
+- Use `generate_sample_deals.py` - works immediately
 
-Verify that your Access Key and Secret Key are correct in `config.py`.
+**For Production (Long-term):**
+1. Generate 3+ sales through your affiliate links
+2. Wait for PA API access
+3. Use `fetch_amazon_deals.py` - most reliable and legal
 
-### No Deals Found
+**For Immediate Real Data:**
+- Try `scrape_amazon_deals.py` but be aware of limitations
+- Consider third-party APIs (Keepa, Rainforest API)
 
-Try different search keywords or increase `MAX_ITEMS` in `config.py`.
+---
 
-## API Resources
+## Next Steps
 
-- [Amazon PA API Documentation](https://webservices.amazon.com/paapi5/documentation/)
-- [Amazon Associates Program](https://affiliate-program.amazon.com/)
-- [PA API Python SDK](https://github.com/amzn/paapi5-python-sdk)
+1. **Now:** Use sample data generator for testing
+2. **Soon:** Work on getting 3 sales for PA API access
+3. **Future:** Switch to official PA API for production use
 
-## License
+---
 
-This project is for educational and personal use with Amazon's Product Advertising API.
+## Documentation
+
+- **`README.md`** - This file
+- **`API_ELIGIBILITY_SOLUTIONS.md`** - Detailed guide on PA API eligibility
+- **Walkthrough** - Complete implementation documentation
+
+---
+
+## Support
+
+All product URLs include your affiliate tag (`booksmanish-20`) so you can start earning commissions from any shared links!
+
+For PA API eligibility questions, visit: https://affiliate-program.amazon.com/
