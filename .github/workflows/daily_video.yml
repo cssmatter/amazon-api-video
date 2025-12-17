@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
@@ -36,6 +36,7 @@ jobs:
         TOKEN_PICKLE_BASE64: ${{ secrets.TOKEN_PICKLE_BASE64 }}
       run: |
         echo "$TOKEN_PICKLE_BASE64" | base64 --decode > token.pickle
+        ls -l token.pickle
 
     - name: Scrape Amazon Deals
       env:

@@ -19,8 +19,12 @@ def authenticate_youtube():
     # created automatically when the authorization flow completes for the first
     # time.
     if os.path.exists("token.pickle"):
-        with open("token.pickle", "rb") as token:
-            creds = pickle.load(token)
+        try:
+            with open("token.pickle", "rb") as token:
+                creds = pickle.load(token)
+        except (EOFError, pickle.UnpicklingError):
+            print("Warning: token.pickle is empty or corrupt.")
+            creds = None
 
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
