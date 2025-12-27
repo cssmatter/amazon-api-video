@@ -38,10 +38,8 @@ jobs:
         echo "$TOKEN_PICKLE_BASE64" | base64 --decode > token.pickle
         ls -l token.pickle
 
-    - name: Scrape Amazon Deals
-      env:
-        HEADLESS: "true"
-      run: python scrape_amazon_deals.py
+    - name: Fetch Amazon Deals
+      run: python fetch_amazon_deals.py
 
     - name: Generate Video
       run: python create_deals_video.py
