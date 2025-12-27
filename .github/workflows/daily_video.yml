@@ -4,10 +4,17 @@ on:
   schedule:
     - cron: '0 */12 * * *'  # Run every 12 hours
   workflow_dispatch:  # Allow manual trigger
+    inputs:
+      search_keywords:
+        description: 'Amazon search keywords (e.g. "Popular Romance books today")'
+        required: false
+        default: 'Popular Romance books today'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for pushing changes back to repo
 
     steps:
     - name: Checkout code
@@ -28,10 +35,22 @@ jobs:
         AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
         AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
         AMAZON_PARTNER_TAG: ${{ secrets.AMAZON_PARTNER_TAG }}
-      run: python fetch_amazon_deals.py
+      run: |
+        KEYWORDS="${{ github.event.inputs.search_keywords }}"
+        if [ -z "$KEYWORDS" ]; then
+          python fetch_amazon_deals.py
+        else
+          python fetch_amazon_deals.py "$KEYWORDS"
+        fi
 
     - name: Generate Blog HTML
       run: python generate_blog.py
+
+    - name: Commit and Push changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Auto-update blog: ${{ github.event.inputs.search_keywords || 'Scheduled update' }}"
+        file_pattern: 'index.html products.json'
 
     - name: Upload Artifacts
       if: always()
