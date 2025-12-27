@@ -190,12 +190,22 @@ def save_to_json(products, filename="products.json"):
     print(f"Successfully saved {len(products)} deals to {filename}")
 
 
+import sys
+
 def main():
     """Main function to fetch deals and save to JSON."""
     print("=" * 60)
     print("Amazon Product Advertising API - Deal Fetcher")
     print("=" * 60)
     
+    # Check for keywords in command line arguments
+    keywords = config.SEARCH_KEYWORDS
+    if len(sys.argv) > 1:
+        keywords = " ".join(sys.argv[1:])
+        print(f"Using search keywords from command line: {keywords}")
+    else:
+        print(f"\nSearching for default keywords: {keywords}")
+
     # Validate configuration
     if config.PARTNER_TAG == "YOUR_ASSOCIATE_TAG_HERE":
         print("\n[!] ERROR: Partner Tag not configured!")
@@ -203,7 +213,6 @@ def main():
         print("Get your tag from: https://affiliate-program.amazon.com/")
         return
     
-    print(f"\nSearching for: {config.SEARCH_KEYWORDS}")
     print(f"Marketplace: {config.MARKETPLACE}")
     print(f"Max items: {config.MAX_ITEMS}\n")
     
@@ -211,36 +220,51 @@ def main():
     api_client = get_api_client()
     
     # Fetch deals
-    print("Fetching deals from Amazon...")
-    products = search_deals(api_client)
+    print(f"Fetching '{keywords}' from Amazon...")
+    
+    # Process products
+    products = []
+    try:
+        # Search for items
+        items = api_client.search_items(
+            keywords=keywords,
+            item_count=config.MAX_ITEMS
+        )
+        
+        if isinstance(items, dict) and 'data' in items:
+            products_list = items['data']
+        elif isinstance(items, list):
+            products_list = items
+        else:
+            print("Unknown response format from PA API.")
+            return
+            
+        # Process each item
+        for item in products_list:
+            product = extract_product_info(item)
+            if product:
+                products.append(product)
+                
+    except Exception as e:
+        print(f"Error calling PA API: {e}")
     
     if products:
-        print(f"\nFound {len(products)} products with deals/savings!")
+        print(f"\nFound {len(products)} products!")
         
         # Save to JSON
         save_to_json(products)
         
         # Display summary
         print("\n" + "=" * 60)
-        print("DEALS SUMMARY")
+        print("PRODUCTS SUMMARY")
         print("=" * 60)
         for i, product in enumerate(products, 1):
             print(f"\n{i}. {product['title']}")
             print(f"   ASIN: {product['asin']}")
             if product['current_price']:
-                print(f"   Price: {product['current_price']}", end="")
-                if product['original_price']:
-                    print(f" (was {product['original_price']})", end="")
-                if product['savings_percentage']:
-                    print(f" - Save {product['savings_percentage']}", end="")
-                print()
-            if product['is_prime_eligible']:
-                print(f"   [Prime] Prime Eligible")
-            if product['promotions']:
-                for promo in product['promotions']:
-                    print(f"   [Promo] {promo['type']}: {promo['discount']}")
+                print(f"   Price: {product['current_price']}")
     else:
-        print("\nNo deals found. Try different search keywords or check your API credentials.")
+        print("\nNo products found. Try different search keywords.")
     
     print("\n" + "=" * 60)
     print("Done!")

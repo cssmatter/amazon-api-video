@@ -204,4 +204,9 @@ cython_debug/
 # Marimo
 marimo/_static/
 marimo/_lsp/
-__marimo__/
+# Amazon Project Specifics
+token.pickle
+client_secrets.json
+products.json
+amazon_deals_video.mp4
+index.html
