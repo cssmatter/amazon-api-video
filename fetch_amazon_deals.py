@@ -191,6 +191,7 @@ def save_to_json(products, filename="products.json"):
 
 
 import sys
+import random
 
 def main():
     """Main function to fetch deals and save to JSON."""
@@ -199,12 +200,20 @@ def main():
     print("=" * 60)
     
     # Check for keywords in command line arguments
-    keywords = config.SEARCH_KEYWORDS
+    keywords = None
     if len(sys.argv) > 1:
-        keywords = " ".join(sys.argv[1:])
-        print(f"Using search keywords from command line: {keywords}")
-    else:
-        print(f"\nSearching for default keywords: {keywords}")
+        arg_str = " ".join(sys.argv[1:]).lower()
+        if arg_str == "random":
+            keywords = random.choice(config.BOOK_CATEGORIES)
+            print(f"Randomly selected category: {keywords}")
+        else:
+            keywords = " ".join(sys.argv[1:])
+            print(f"Using search keywords from command line: {keywords}")
+    
+    # Default behavior if no keywords provided
+    if not keywords:
+        keywords = random.choice(config.BOOK_CATEGORIES)
+        print(f"No keywords provided. Using random category: {keywords}")
 
     # Validate configuration
     if config.PARTNER_TAG == "YOUR_ASSOCIATE_TAG_HERE":
