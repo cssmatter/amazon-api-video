@@ -38,14 +38,19 @@ def search_deals(api_client):
             item_count=config.MAX_ITEMS
         )
         
-        if not items or not items.items:
-            print("No search results found.")
+        print(f"DEBUG: items type: {type(items)}")
+        if isinstance(items, dict) and 'data' in items:
+            products_list = items['data']
+        elif isinstance(items, list):
+            products_list = items
+        else:
+            print("Unknown response format from PA API.")
             return []
-        
+            
         products = []
         
         # Process each item in the response
-        for item in items.items:
+        for item in products_list:
             product = extract_product_info(item)
             if product:
                 products.append(product)
@@ -62,14 +67,20 @@ def extract_product_info(item):
     Extract relevant product information from API response item.
     
     Args:
-        item: AmazonProduct object from API response
+        item: AmazonProduct object or dictionary from API response
         
     Returns:
         dict: Formatted product information
     """
     try:
+        # Helper to get value from either object attribute or dictionary key
+        def get_val(obj, key, default=None):
+            if isinstance(obj, dict):
+                return obj.get(key, default)
+            return getattr(obj, key, default)
+
         product = {
-            "asin": None,
+            "asin": get_val(item, 'asin'),
             "title": None,
             "current_price": None,
             "original_price": None,
@@ -79,79 +90,77 @@ def extract_product_info(item):
             "is_prime_eligible": False,
             "promotions": [],
             "image_url": None,
-            "product_url": None
+            "product_url": get_val(item, 'detail_page_url')
         }
         
-        # Extract ASIN
-        if hasattr(item, 'asin'):
-            product["asin"] = item.asin
-        
         # Extract title
-        if hasattr(item, 'item_info') and item.item_info:
-            if hasattr(item.item_info, 'title') and item.item_info.title:
-                product["title"] = item.item_info.title.display_value
+        item_info = get_val(item, 'item_info')
+        if item_info:
+            title_obj = get_val(item_info, 'title')
+            if title_obj:
+                product["title"] = get_val(title_obj, 'display_value')
         
         # Extract image
-        if hasattr(item, 'images') and item.images:
-            if hasattr(item.images, 'primary') and item.images.primary:
-                if hasattr(item.images.primary, 'large') and item.images.primary.large:
-                    product["image_url"] = item.images.primary.large.url
-        
-        # Extract product URL
-        if hasattr(item, 'detail_page_url'):
-            product["product_url"] = item.detail_page_url
+        images = get_val(item, 'images')
+        if images:
+            primary = get_val(images, 'primary')
+            if primary:
+                large = get_val(primary, 'large')
+                if large:
+                    product["image_url"] = get_val(large, 'url')
         
         # Extract pricing and deal information
-        if hasattr(item, 'offers') and item.offers:
-            if hasattr(item.offers, 'listings') and item.offers.listings and len(item.offers.listings) > 0:
-                listing = item.offers.listings[0]
+        offers = get_val(item, 'offers')
+        if offers:
+            listings = get_val(offers, 'listings')
+            if listings and len(listings) > 0:
+                listing = listings[0]
                 
                 # Current price
-                if hasattr(listing, 'price') and listing.price:
-                    product["current_price"] = listing.price.display_amount
-                    if hasattr(listing.price, 'currency'):
-                        product["currency"] = listing.price.currency
+                price = get_val(listing, 'price')
+                if price:
+                    product["current_price"] = get_val(price, 'display_amount')
+                    product["currency"] = get_val(price, 'currency')
                 
                 # Original price (savings basis)
-                if hasattr(listing, 'saving_basis') and listing.saving_basis:
-                    product["original_price"] = listing.saving_basis.display_amount
+                saving_basis = get_val(listing, 'saving_basis')
+                if saving_basis:
+                    product["original_price"] = get_val(saving_basis, 'display_amount')
                     
                     # Calculate savings
-                    if hasattr(listing, 'price') and listing.price and hasattr(listing.price, 'amount'):
-                        try:
-                            current = listing.price.amount
-                            original = listing.saving_basis.amount
-                            savings_amount = original - current
-                            savings_pct = (savings_amount / original) * 100
-                            
-                            currency_symbol = product["currency"] if product["currency"] else "USD"
-                            product["savings"] = f"{currency_symbol} {savings_amount:.2f}"
-                            product["savings_percentage"] = f"{savings_pct:.0f}%"
-                        except:
-                            pass
+                    if price:
+                        price_amount = get_val(price, 'amount')
+                        basis_amount = get_val(saving_basis, 'amount')
+                        if price_amount is not None and basis_amount is not None:
+                            try:
+                                savings_amount = basis_amount - price_amount
+                                if basis_amount > 0:
+                                    savings_pct = (savings_amount / basis_amount) * 100
+                                    currency_symbol = product["currency"] if product["currency"] else "USD"
+                                    product["savings"] = f"{currency_symbol} {savings_amount:.2f}"
+                                    product["savings_percentage"] = f"{savings_pct:.0f}%"
+                            except:
+                                pass
                 
                 # Prime eligibility
-                if hasattr(listing, 'delivery_info') and listing.delivery_info:
-                    if hasattr(listing.delivery_info, 'is_prime_eligible'):
-                        product["is_prime_eligible"] = listing.delivery_info.is_prime_eligible
+                delivery_info = get_val(listing, 'delivery_info')
+                if delivery_info:
+                    product["is_prime_eligible"] = get_val(delivery_info, 'is_prime_eligible', False)
                 
                 # Promotions
-                if hasattr(listing, 'promotions') and listing.promotions:
-                    for promo in listing.promotions:
-                        promo_info = {}
-                        if hasattr(promo, 'type'):
-                            promo_info["type"] = promo.type
-                        else:
-                            promo_info["type"] = "Unknown"
-                        
-                        if hasattr(promo, 'discount_percent'):
-                            promo_info["discount"] = f"{promo.discount_percent}%"
-                        
-                        if promo_info:
+                promotions = get_val(listing, 'promotions')
+                if promotions:
+                    for promo in promotions:
+                        promo_info = {
+                            "type": get_val(promo, 'type', "Unknown"),
+                            "discount": f"{get_val(promo, 'discount_percent')}%" if get_val(promo, 'discount_percent') else None
+                        }
+                        if promo_info["type"]:
                             product["promotions"].append(promo_info)
         
-        # Only return products that have some deal/savings information
-        if product["savings"] or product["promotions"]:
+        # Return product even if no savings, since we want books, toys etc as well
+        # But filter out those without a title or ASIN
+        if product["asin"] and product["title"]:
             return product
         
         return None
