@@ -207,6 +207,4 @@ marimo/_lsp/
 # Amazon Project Specifics
 token.pickle
 client_secrets.json
-products.json
 amazon_deals_video.mp4
-index.html
