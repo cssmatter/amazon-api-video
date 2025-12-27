@@ -1,255 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazon Deals Blog</title>
+    <meta name="description"
+        content="Discover Amazon's top motivational books today and find the inspiration you need to transform your mindset and habits.">
+    <meta name="keywords" content="Amazon top books, motivation books, self help, personal growth">
+    <meta name="author" content="Your Blog Name">
+    <title>Amazon Today's Top Motivation Books</title>
     <style>
-        :root {
-            --primary-color: #232f3e;
-            --accent-color: #febd69;
-            --text-color: #111;
-            --bg-color: #f3f3f3;
-            --card-bg: #fff;
-        }
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #fafafa;
+            color: #333;
             line-height: 1.6;
             margin: 0;
             padding: 0;
         }
+
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            width: 85%;
+            max-width: 1000px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 25px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
+
+        h1,
+        h2 {
+            color: #222;
+        }
+
+        .book {
             margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
         }
-        h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            color: var(--accent-color);
+
+        .book:last-child {
+            border-bottom: none;
         }
-        .timestamp {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-top: 10px;
+
+        .author {
+            font-style: italic;
+            color: #666;
         }
-        .product-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-        .product-title {
-            font-size: 1.5rem;
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-        .product-image {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto 20px;
-            border-radius: 4px;
-        }
-        .price-section {
-            margin: 20px 0;
-            font-size: 1.2rem;
-        }
-        .current-price {
-            font-weight: bold;
-            color: #b12704;
-            font-size: 1.5rem;
-        }
-        .savings {
-            color: #565959;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-        .btn-container {
+
+        .cta {
+            background: #ff9900;
+            color: #fff;
+            padding: 15px;
             text-align: center;
             margin-top: 30px;
+            font-size: 18px;
         }
-        .view-offer-btn {
-            background-color: var(--accent-color);
-            color: var(--text-color);
-            padding: 12px 30px;
+
+        .cta a {
+            color: #fff;
             text-decoration: none;
-            border-radius: 50px;
             font-weight: bold;
-            display: inline-block;
-            transition: background-color 0.2s;
-            border: 1px solid #a88734;
-        }
-        .view-offer-btn:hover {
-            background-color: #f3a847;
-        }
-        hr {
-            border: 0;
-            height: 1px;
-            background: #eee;
-            margin: 40px 0;
-        }
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-            font-size: 0.9rem;
         }
     </style>
 </head>
+
 <body>
-    <header>
-        <div class="container">
-            <h1>Today's Best Amazon Deals</h1>
-            <div class="timestamp">Last updated: December 27, 2025 - 01:11 PM</div>
-        </div>
-    </header>
-    
+
     <div class="container">
+        <h1>Amazon Today's Top Books on Motivation</h1>
+        <p>
+            Looking for inspiration to level up your life? Amazon’s top motivational books today
+            are packed with powerful lessons on discipline, mindset, and personal growth.
+            Here are some of the most popular titles readers can’t stop talking about.
+        </p>
 
-        <article class="product-card">
-            <h2 class="product-title">The Seven Year Slip</h2>
-            <img src="https://m.media-amazon.com/images/I/51nJPwM-R3L._SL500_.jpg" alt="The Seven Year Slip" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$7.13</span>
-                <span class="savings">(58% OFF)</span>
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/059333650X?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">The Midnight Library: A GMA Book Club Pick: A Novel (The Midnight World)</h2>
-            <img src="https://m.media-amazon.com/images/I/51wtu085dIL._SL500_.jpg" alt="The Midnight Library: A GMA Book Club Pick: A Novel (The Midnight World)" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$9.54</span>
-                <span class="savings">(47% OFF)</span>
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/0525559493?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">The Love Hypothesis</h2>
-            <img src="https://m.media-amazon.com/images/I/415LSKU8lqL._SL500_.jpg" alt="The Love Hypothesis" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$8.97</span>
-                <span class="savings">(44% OFF)</span>
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/0593336828?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">Troubled Nate Thomas: Hot Steamy Sport Romance NFL HEA TNT (T.N.T. Series Book 1)</h2>
-            <img src="https://m.media-amazon.com/images/I/51WVII65Q5L._SL500_.jpg" alt="Troubled Nate Thomas: Hot Steamy Sport Romance NFL HEA TNT (T.N.T. Series Book 1)" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$0.00</span>
-                
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/B01MSRXX9G?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">The Book Thief</h2>
-            <img src="https://m.media-amazon.com/images/I/41RKGjq-XGL._SL500_.jpg" alt="The Book Thief" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$8.24</span>
-                <span class="savings">(45% OFF)</span>
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/0375842209?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">The Cinnamon Bun Book Store: The viral TikTok cozy fall romance for fans of opposites attract and small-town romcoms in 2025! (Dream Harbor)</h2>
-            <img src="https://m.media-amazon.com/images/I/5189vi6T3TL._SL500_.jpg" alt="The Cinnamon Bun Book Store: The viral TikTok cozy fall romance for fans of opposites attract and small-town romcoms in 2025! (Dream Harbor)" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$9.97</span>
-                <span class="savings">(47% OFF)</span>
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/0008641587?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">The Baby Dragon Cafe: the USA Today bestselling charming NEW cozy romance fantasy for 2025 you need! (The Baby Dragon series Book 1)</h2>
-            <img src="https://m.media-amazon.com/images/I/51AtfCIvnqL._SL500_.jpg" alt="The Baby Dragon Cafe: the USA Today bestselling charming NEW cozy romance fantasy for 2025 you need! (The Baby Dragon series Book 1)" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$0.99</span>
-                
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/B0D8J1ZTR5?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">Before We Were Yours: A Novel</h2>
-            <img src="https://m.media-amazon.com/images/I/41LB2-ktQ9L._SL500_.jpg" alt="Before We Were Yours: A Novel" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$6.84</span>
-                <span class="savings">(32% OFF)</span>
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/0593599004?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">The Christmas Tree Farm: A grumpy sunshine viral TikTok sensation romcom for fans of winter cozy mysteries and spicy romances in 2025! (Dream Harbor) (Book 3)</h2>
-            <img src="https://m.media-amazon.com/images/I/51xGqe1PP4L._SL500_.jpg" alt="The Christmas Tree Farm: A grumpy sunshine viral TikTok sensation romcom for fans of winter cozy mysteries and spicy romances in 2025! (Dream Harbor) (Book 3)" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$9.92</span>
-                <span class="savings">(48% OFF)</span>
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/0008610746?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-        <article class="product-card">
-            <h2 class="product-title">Little Women (Little Women Series Book 1)</h2>
-            <img src="https://m.media-amazon.com/images/I/51pFMe+ekrL._SL500_.jpg" alt="Little Women (Little Women Series Book 1)" class="product-image">
-            <div class="price-section">
-                <span class="current-price">$0.99</span>
-                
-            </div>
-            <div class="btn-container">
-                <a href="https://www.amazon.com/dp/B007JLCO34?tag=booksmanish-20&linkCode=osi&th=1&psc=1" target="_blank" class="view-offer-btn">View Offer on Amazon</a>
-            </div>
-        </article>
-
-    </div>
-    
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Amazon Deals Blog. All rights reserved.</p>
-            <p>As an Amazon Associate I earn from qualifying purchases.</p>
+        <div class="book">
+            <h2>Atomic Habits</h2>
+            <p class="author">by James Clear</p>
+            <p>
+                This bestselling book focuses on the power of small habits. Instead of chasing
+                massive changes, it teaches how tiny daily improvements can lead to remarkable
+                long-term success.
+            </p>
         </div>
-    </footer>
+
+        <div class="book">
+            <h2>The 7 Habits of Highly Effective People</h2>
+            <p class="author">by Stephen R. Covey</p>
+            <p>
+                A timeless classic in the self-help space, this book offers a principle-centered
+                approach to solving personal and professional problems through effective habits.
+            </p>
+        </div>
+
+        <div class="book">
+            <h2>Think Like a Monk</h2>
+            <p class="author">by Jay Shetty</p>
+            <p>
+                Drawing from ancient wisdom and modern experiences, this book teaches readers
+                how to find clarity, purpose, and peace in a fast-paced world.
+            </p>
+        </div>
+
+        <div class="book">
+            <h2>Can't Hurt Me</h2>
+            <p class="author">by David Goggins</p>
+            <p>
+                A raw and intense memoir that pushes readers to break through mental barriers,
+                embrace discomfort, and unlock their true potential.
+            </p>
+        </div>
+
+        <div class="cta">
+            <p>
+                Ready to get motivated?
+                <a href="#">Explore these books on Amazon today!</a>
+            </p>
+        </div>
+    </div>
+
 </body>
+
 </html>
